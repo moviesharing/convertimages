@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>BMP to PNG Converter</title>
+    <script>
+      function convertToPNG() {
+        const fileInput = document.getElementById("image");
+        const file = fileInput.files[0];
+        const allowedTypes = ['image/bmp'];
+        const maxSize = 5 * 1024 * 1024; // 5 MB
+        if (!file) {
+          alert("Please select an image");
+          return false;
+        } else if (!allowedTypes.includes(file.type)) {
+          alert("Please select a BMP image");
+          return false;
+        } else if (file.size > maxSize) {
+          alert("Please select an image less than 5 MB");
+          return false;
+        } else {
+          const formData = new FormData();
+          formData.append("image", file);
+          fetch("/api/bmptopng", {
+            method: "POST",
+            body: formData
+          })
+          .then(response => {
+            // Handle response from Flask server
+            console.log(response);
+          })
+          .catch(error => {
+            // Handle error
+            console.error(error);
+          });
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <h1>BMP to PNG Converter</h1>
+    <form method="POST" enctype="multipart/form-data">
+      <label for="image">Choose an image:</label>
+      <input type="file" id="image" name="image">
+      <br><br>
+      <button type="submit" onclick="convertToPNG()">Convert to PNG</button>
+    </form>
+  </body>
+</html>
